@@ -82,6 +82,6 @@ func processImage(imageData []byte) (*storage.Prediction, error) {
 	//return &result, nil
 	return &storage.Prediction{
 		ImageID:     "123",
-		Probability: 0,
+		Probability: "0",
 	}, nil
 }
