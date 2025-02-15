@@ -42,7 +42,7 @@ func (r *ReportRepository) GetReportByID(reportID string) (*OTCReport, error) {
 
 // CreateReport 添加新医生
 func (r *ReportRepository) CreateReport(report *OTCReport) error {
-	log.Println("Creating report:", report)
+
 	err := r.db.Create(report).Error
 	if err != nil {
 		log.Println("Error creating report:", err)

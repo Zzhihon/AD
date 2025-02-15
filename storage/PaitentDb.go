@@ -45,7 +45,6 @@ func (r *PatientRepository) GetPatientByID(patientID string) (*Patient, error) {
 func (r *PatientRepository) CreatePatient(request *dto.CreatePatientRequest) error {
 	// 创建病人
 	patient := Patient{
-		ID:     request.ID,
 		Name:   request.Name,
 		Age:    request.Age,
 		Gender: request.Gender,
@@ -53,17 +52,20 @@ func (r *PatientRepository) CreatePatient(request *dto.CreatePatientRequest) err
 
 	// 插入病人到数据库
 	if err := r.db.Create(&patient).Error; err != nil {
+		log.Println(err.Error())
 		return err
 	}
 
 	// 查找指定的医生
 	var doctor Doctor
 	if err := r.db.First(&doctor, request.DoctorID).Error; err != nil {
+		log.Println(err.Error())
 		return err
 	}
 
 	// 将病人与医生关联（即将病人插入关联表 doctor_patients 中）
 	if err := r.db.Model(&patient).Association("Doctors").Append(&doctor); err != nil {
+		log.Println("Association" + err.Error())
 		return err
 	}
 

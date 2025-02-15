@@ -25,7 +25,6 @@ func (s *PatientService) CreatePatient(request *dto.CreatePatientRequest) error 
 	return s.PatientRepo.CreatePatient(request)
 }
 
-// GetPatientByID 通过 PatientID 获取医生
 func (s *PatientService) GetPatientByID(patientID string) (*storage.Patient, error) {
 	return s.PatientRepo.GetPatientByID(patientID)
 }

@@ -1,7 +1,11 @@
 package service
 
 import (
+	"AD/dto"
 	"AD/storage"
+	"fmt"
+	"strconv"
+	"time"
 )
 
 type ReportService struct {
@@ -14,8 +18,22 @@ func NewReportService(reportRepo *storage.ReportRepository) *ReportService {
 }
 
 // CreateReport 添加新医生
-func (s *ReportService) CreateReport(report *storage.OTCReport) error {
+func (s *ReportService) CreateReport(request *dto.OTCFormRequest) error {
 	// 这里可以加一些业务逻辑，比如数据验证等
+	i, err := strconv.Atoi(request.PatientID)
+	if err != nil {
+		fmt.Println("转换失败:", err)
+		return err
+	}
+
+	// 将 int 转换为 uint
+	patientID := uint(i)
+	report := &storage.OTCReport{
+		PatienName: request.PatientName,
+		DoctorName: request.DoctorName,
+		PatientID:  patientID,
+		ReportDate: time.Now(),
+	}
 
 	return s.ReportRepo.CreateReport(report)
 }

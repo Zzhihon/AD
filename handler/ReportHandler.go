@@ -1,11 +1,11 @@
 package handler
 
 import (
+	"AD/dto"
 	"AD/service"
 	"AD/storage"
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"log"
 	"net/http"
 )
 
@@ -20,13 +20,13 @@ func NewReportHandler(reportService *service.ReportService) *ReportHandler {
 }
 
 func (h *ReportHandler) CreateReport(w http.ResponseWriter, r *http.Request) {
-	var report storage.OTCReport
+	var report dto.OTCFormRequest
 	err := json.NewDecoder(r.Body).Decode(&report)
 	if err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	log.Println()
+
 	err = h.ReportService.CreateReport(&report)
 	if err != nil {
 		http.Error(w, "Error creating report", http.StatusInternalServerError)

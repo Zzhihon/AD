@@ -5,6 +5,7 @@ import (
 	"AD/mq"
 	"AD/service"
 	"AD/storage"
+	"AD/utils"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -20,6 +21,12 @@ func main() {
 	// 加载 .env 文件
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
+	}
+	// 创建 uploads 目录
+	err := os.MkdirAll("./uploads", os.ModePerm)
+	if err != nil {
+		fmt.Println("无法创建 uploads 目录:", err)
+		return
 	}
 
 	router := mux.NewRouter()
@@ -55,7 +62,7 @@ func main() {
 	reportHandler := handler.NewReportHandler(reportService)
 
 	// 启动 HTTP 服务器
-	router.HandleFunc("/upload/", service.UploadHandler).Methods(http.MethodPost)
+	//router.HandleFunc("/upload/", service.UploadHandler).Methods(http.MethodPost)
 	router.HandleFunc("/ws/", service.WebSocketHandler).Methods(http.MethodPost)
 	router.HandleFunc("/AddDoctor/", doctorHandler.CreateDoctor).Methods(http.MethodPost)
 	router.HandleFunc("/GetDoctor/{doctor_id:[0-9]+}/", doctorHandler.GetDoctorByID).Methods(http.MethodGet)
@@ -69,6 +76,8 @@ func main() {
 	router.HandleFunc("/AddReport/", reportHandler.CreateReport).Methods(http.MethodPost)
 	router.HandleFunc("/GetReport/{report_id:[0-9]+}/", reportHandler.GetReportByID).Methods(http.MethodGet)
 	router.HandleFunc("/UpdateReport/", reportHandler.UpdateReport).Methods(http.MethodPost)
+
+	router.HandleFunc("/ImageUpload/", utils.ImageUpload).Methods(http.MethodPost)
 
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", handlers))

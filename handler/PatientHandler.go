@@ -28,7 +28,8 @@ func (h *PatientHandler) CreatePatient(w http.ResponseWriter, r *http.Request) {
 	}
 	err = h.PatientService.CreatePatient(&request)
 	if err != nil {
-		http.Error(w, "Error creating patient", http.StatusInternalServerError)
+
+		http.Error(w, "Error creating patient"+err.Error(), http.StatusInternalServerError)
 		return
 	}
 

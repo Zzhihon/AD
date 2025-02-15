@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -12,6 +11,7 @@ type Prediction struct {
 	OTCReport   *OTCReport `gorm:"foreignKey:OTCReportID" json:"otc_report"` // 通过外键字段关联 OTCReport	Advice      string     `gorm:"size:200"`
 	ImageID     string     `gorm:"size:200" json:"image_id"`
 	Probability string     `gorm:"size:200" json:"probability"`
+	Advice      string     `gorm:"size:200" json:"advice"`
 }
 
 type Patient struct {
@@ -20,18 +20,22 @@ type Patient struct {
 	Age        int         `gorm:"not null" json:"age"`
 	Gender     string      `gorm:"type:varchar(10);not null" json:"gender"`
 	OTCReports []OTCReport `gorm:"foreignKey:PatientID;references:ID" json:"otc_reports"` // 一对多关系
+	Doctors    []*Doctor   `gorm:"many2many:doctor_patients;" json:"doctors"`             // 多对多关系
+
 }
 
 type OTCReport struct {
 	ID         uint       `gorm:"primaryKey" json:"id"`
-	PatientID  uint       `gorm:"not null" json:"patientID"`
+	PatienName string     `gorm:"type:varchar(100);not null" json:"patien_name"`
+	DoctorName string     `gorm:"type:varchar(100);not null" json:"doctor_name"`
+	PatientID  uint       `gorm:"not null" json:"patient_id"` // 外键字段
 	Patient    Patient    `gorm:"foreignKey:PatientID" json:"patient"`
 	ReportDate time.Time  `gorm:"not null" json:"reportDate"`
 	Prediction Prediction `gorm:"foreignKey:OTCReportID" json:"prediction"` // 一对一关系
 }
 
 type Doctor struct {
-	gorm.Model            // 自动包含 ID、CreatedAt、UpdatedAt 和 DeletedAt
+	ID         uint       `gorm:"primaryKey" json:"id"`
 	Name       string     `gorm:"size:100;not null" json:"name"`              // 设置列的大小并确保不为 null
 	Email      string     `gorm:"size:100;not null;unique" json:"email"`      // 设置唯一的 Email
 	Contact    string     `gorm:"size:20;not null" json:"contact"`            // 设置联系字段的大小并确保不为 null
