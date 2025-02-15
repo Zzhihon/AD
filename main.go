@@ -78,6 +78,7 @@ func main() {
 	router.HandleFunc("/UpdateReport/", reportHandler.UpdateReport).Methods(http.MethodPost)
 
 	router.HandleFunc("/ImageUpload/", utils.ImageUpload).Methods(http.MethodPost)
+	router.HandleFunc("/Search/", reportHandler.Search).Methods(http.MethodPost)
 
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", handlers))

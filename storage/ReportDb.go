@@ -1,14 +1,59 @@
 package storage
 
 import (
+	"AD/dto"
 	"errors"
 	"gorm.io/gorm"
 	"log"
+	"strings"
 )
 
 // ReportRepository 负责数据库操作
 type ReportRepository struct {
 	db *gorm.DB
+}
+
+func (r *ReportRepository) Search(req dto.SearchRequest) ([]OTCReport, error) {
+	// 显式指定 otc_reports 表和 patients 表的别名
+	query := r.db.Table("otc_reports").
+		Joins("LEFT JOIN patients ON otc_reports.patient_id = patients.id")
+
+	// 患者名字（模糊搜索）
+	if req.PatientName != "" {
+		query = query.Where("patients.name LIKE ?", "%"+req.PatientName+"%")
+	}
+
+	// 性别（男或女）
+	if req.Gender != "" {
+		query = query.Where("patients.gender = ?", req.Gender)
+	}
+
+	// 年龄区间（56-60，61-65，66-70）
+	if req.AgeRange != "" {
+		ageRange := strings.Split(req.AgeRange, "-")
+		if len(ageRange) == 2 {
+			query = query.Where("patients.age BETWEEN ? AND ?", ageRange[0], ageRange[1])
+		}
+	}
+
+	// OTC图像状态
+	if req.OTCImageStatus != nil {
+		query = query.Where("otc_reports.otc_image_status = ?", *req.OTCImageStatus)
+	}
+
+	// 报告状态
+	if req.PredictionStatus != nil {
+		query = query.Where("otc_reports.report_status = ?", *req.PredictionStatus)
+	}
+
+	// 执行查询
+	var reports []OTCReport
+	if err := query.Preload("Patient").Find(&reports).Error; err != nil {
+		log.Println("Failed to execute search query:", err)
+		return nil, err
+	}
+
+	return reports, nil
 }
 
 // NewReportRepository 创建 ReportRepository

@@ -4,6 +4,7 @@ import (
 	"AD/dto"
 	"AD/storage"
 	"fmt"
+	"log"
 	"strconv"
 	"time"
 )
@@ -17,7 +18,20 @@ func NewReportService(reportRepo *storage.ReportRepository) *ReportService {
 	return &ReportService{ReportRepo: reportRepo}
 }
 
-// CreateReport 添加新医生
+func (s *ReportService) Search(req dto.SearchRequest) ([]storage.OTCReport, error) {
+	log.Println("Searching OTC reports with conditions:", req)
+
+	// 调用 Repository 层
+	reports, err := s.ReportRepo.Search(req)
+	if err != nil {
+		log.Println("Failed to search OTC reports in repository:", err)
+		return nil, err
+	}
+
+	return reports, nil
+}
+
+// CreateReport
 func (s *ReportService) CreateReport(request *dto.OTCFormRequest) error {
 	// 这里可以加一些业务逻辑，比如数据验证等
 	i, err := strconv.Atoi(request.PatientID)
@@ -29,10 +43,10 @@ func (s *ReportService) CreateReport(request *dto.OTCFormRequest) error {
 	// 将 int 转换为 uint
 	patientID := uint(i)
 	report := &storage.OTCReport{
-		PatienName: request.PatientName,
-		DoctorName: request.DoctorName,
-		PatientID:  patientID,
-		ReportDate: time.Now(),
+		PatientName: request.PatientName,
+		DoctorName:  request.DoctorName,
+		PatientID:   patientID,
+		ReportDate:  time.Now(),
 	}
 
 	return s.ReportRepo.CreateReport(report)

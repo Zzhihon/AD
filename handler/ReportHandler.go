@@ -6,6 +6,7 @@ import (
 	"AD/storage"
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 )
 
@@ -17,6 +18,33 @@ type ReportHandler struct {
 // NewReportHandler 创建新的 ReportHandler 实例
 func NewReportHandler(reportService *service.ReportService) *ReportHandler {
 	return &ReportHandler{ReportService: reportService}
+}
+
+func (h *ReportHandler) Search(w http.ResponseWriter, r *http.Request) {
+	var req dto.SearchRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		log.Println("Failed to decode request body:", err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// 调用 Service 层
+	reports, err := h.ReportService.Search(req)
+	if err != nil {
+		log.Println("Failed to search OTC reports:", err)
+		http.Error(w, "Failed to search OTC reports", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(reports); err != nil {
+		log.Println("Failed to encode response:", err)
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		return
+	} else {
+		log.Println(reports)
+		log.Println("Report search succeeded")
+	}
 }
 
 func (h *ReportHandler) CreateReport(w http.ResponseWriter, r *http.Request) {
