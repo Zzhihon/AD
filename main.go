@@ -2,10 +2,9 @@ package main
 
 import (
 	"AD/handler"
-	"AD/mq"
+	"AD/mq_consumer"
 	"AD/service"
 	"AD/storage"
-	"AD/utils"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -43,23 +42,26 @@ func main() {
 
 	// 初始化数据库
 	db := dbclient()
-	// 启动 RabbitMQ 消费者
-	go mq.StartConsumer()
 
 	// 创建 Repository
 	doctorRepo := storage.NewDoctorRepository(db)
 	patientRepo := storage.NewPatientRepository(db)
 	reportRepo := storage.NewReportRepository(db)
+	predictionRepo := storage.NewPredictionRepository(db)
 
 	// 创建 Service，将 Repository 注入其中
 	doctorService := service.NewDoctorService(doctorRepo)
 	patientService := service.NewPatientService(patientRepo)
 	reportService := service.NewReportService(reportRepo)
+	predictionService := service.NewUploadService(predictionRepo)
+
+	go mq_consumer.StartConsumer(predictionService)
 
 	// 创建 Handler，将 Service 注入其中
 	doctorHandler := handler.NewDoctorHandler(doctorService)
 	patientHandler := handler.NewPatientHandler(patientService)
 	reportHandler := handler.NewReportHandler(reportService)
+	predictHandler := handler.NewUploadHandler(predictionService)
 
 	// 启动 HTTP 服务器
 	//router.HandleFunc("/upload/", service.UploadHandler).Methods(http.MethodPost)
@@ -77,7 +79,7 @@ func main() {
 	router.HandleFunc("/GetReport/{report_id:[0-9]+}/", reportHandler.GetReportByID).Methods(http.MethodGet)
 	router.HandleFunc("/UpdateReport/", reportHandler.UpdateReport).Methods(http.MethodPost)
 
-	router.HandleFunc("/ImageUpload/", utils.ImageUpload).Methods(http.MethodPost)
+	router.HandleFunc("/UploadImage/", predictHandler.UploadImage).Methods(http.MethodPost)
 	router.HandleFunc("/Search/", reportHandler.Search).Methods(http.MethodPost)
 
 	log.Println("Server started on :8080")

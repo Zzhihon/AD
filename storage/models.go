@@ -9,9 +9,12 @@ type Prediction struct {
 	ID          uint       `gorm:"primaryKey" json:"id"`
 	OTCReportID uint       `gorm:"not null" json:"otc_report_id"`            // 外键字段
 	OTCReport   *OTCReport `gorm:"foreignKey:OTCReportID" json:"otc_report"` // 通过外键字段关联 OTCReport	Advice      string     `gorm:"size:200"`
-	ImageID     string     `gorm:"size:200" json:"image_id"`
 	Probability string     `gorm:"size:200" json:"probability"`
-	Advice      string     `gorm:"size:200" json:"advice"`
+	Advice      string     `gorm:"size:800" json:"advice"`
+	Final       float64    `gorm:"size:200" json:"final"`
+	LR          float64    `gorm:"size:200" json:"lr"`
+	SVM         float64    `gorm:"size:200" json:"svm"`
+	DT          float64    `gorm:"size:200" json:"dt"`
 }
 
 type Patient struct {
@@ -33,6 +36,7 @@ type OTCReport struct {
 	Prediction       Prediction `gorm:"foreignKey:OTCReportID" json:"prediction"`   // 一对一关系
 	OTCImageStatus   int        `gorm:"type:int;default:0" json:"otc_image_status"` // 0: 未上传, 1: 已上传
 	PredictionStatus int        `gorm:"type:int;default:0" json:"report_status"`    // 0: 未开始, 1: 生成中, 2: 生成异常
+	ImagePath        string     `gorm:"type:varchar(100);default:''" json:"image_path"`
 }
 
 type Doctor struct {
