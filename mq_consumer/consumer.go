@@ -7,7 +7,7 @@ import (
 )
 
 // StartConsumer 启动消费者，监听 RabbitMQ 队列
-func StartConsumer(uploadService *service.UploadService) {
+func StartConsumer(uploadService *service.PredicService) {
 	conn, err := amqp.Dial("amqp://hzh:qweasd123@8.138.167.80:5672/")
 	if err != nil {
 		log.Fatalf("Failed to connect to RabbitMQ: %v", err)

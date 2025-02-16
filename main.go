@@ -5,6 +5,7 @@ import (
 	"AD/mq_consumer"
 	"AD/service"
 	"AD/storage"
+	"AD/utils"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -27,6 +28,9 @@ func main() {
 		fmt.Println("无法创建 uploads 目录:", err)
 		return
 	}
+
+	//连接minio
+	minioClient()
 
 	router := mux.NewRouter()
 	c := cors.New(cors.Options{
@@ -53,7 +57,7 @@ func main() {
 	doctorService := service.NewDoctorService(doctorRepo)
 	patientService := service.NewPatientService(patientRepo)
 	reportService := service.NewReportService(reportRepo)
-	predictionService := service.NewUploadService(predictionRepo)
+	predictionService := service.NewPredictService(predictionRepo)
 
 	go mq_consumer.StartConsumer(predictionService)
 
@@ -61,7 +65,7 @@ func main() {
 	doctorHandler := handler.NewDoctorHandler(doctorService)
 	patientHandler := handler.NewPatientHandler(patientService)
 	reportHandler := handler.NewReportHandler(reportService)
-	predictHandler := handler.NewUploadHandler(predictionService)
+	predictHandler := handler.NewPredictHandler(predictionService)
 
 	// 启动 HTTP 服务器
 	//router.HandleFunc("/upload/", service.UploadHandler).Methods(http.MethodPost)
@@ -109,4 +113,13 @@ func dbclient() *gorm.DB {
 	}
 
 	return db
+}
+
+func minioClient() {
+	minioAdress := os.Getenv("MINIO_ADDR")
+	minioAccess := os.Getenv("MINIO_ACCESS")
+	minioSecret := os.Getenv("MINIO_SECRET")
+
+	utils.InitMinioClient(minioAdress, minioAccess, minioSecret, false)
+
 }
