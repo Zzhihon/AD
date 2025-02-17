@@ -20,6 +20,28 @@ func NewReportHandler(reportService *service.ReportService) *ReportHandler {
 	return &ReportHandler{ReportService: reportService}
 }
 
+func (h *ReportHandler) FindByPatientID(w http.ResponseWriter, r *http.Request) {
+	// 从 URL 参数中获取 patientID
+	vars := mux.Vars(r)
+	patientID := vars["patient_id"]
+
+	// 调用 Service 层
+	reports, err := h.ReportService.FindByPatientID(patientID)
+	if err != nil {
+		log.Println("Failed to find OTC reports:", err)
+		http.Error(w, "Failed to find OTC reports", http.StatusInternalServerError)
+		return
+	}
+
+	// 返回结果
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(reports); err != nil {
+		log.Println("Failed to encode response:", err)
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		return
+	}
+}
+
 func (h *ReportHandler) Search(w http.ResponseWriter, r *http.Request) {
 	var req dto.SearchRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

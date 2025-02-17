@@ -3,6 +3,7 @@ package handler
 import (
 	"AD/service"
 	"AD/utils"
+	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -52,14 +53,16 @@ func (h *PredictHandler) UploadImage(w http.ResponseWriter, r *http.Request) {
 
 func (h *PredictHandler) GetImage(w http.ResponseWriter, r *http.Request) {
 	// 从查询参数中获取文件名
-	fileName := r.URL.Query().Get("file")
+	vars := mux.Vars(r)
+	fileName := vars["fileName"]
+
 	if fileName == "" {
 		http.Error(w, "文件名不能为空", http.StatusBadRequest)
 		return
 	}
 
 	// 从 MinIO 桶中获取文件
-	bucketName := "images" // MinIO 桶名称
+	bucketName := "ad-project" // MinIO 桶名称
 	fileBytes, err := utils.GetFile(bucketName, fileName)
 	if err != nil {
 		log.Printf("无法获取文件: %v", err)

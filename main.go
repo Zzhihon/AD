@@ -82,9 +82,11 @@ func main() {
 	router.HandleFunc("/AddReport/", reportHandler.CreateReport).Methods(http.MethodPost)
 	router.HandleFunc("/GetReport/{report_id:[0-9]+}/", reportHandler.GetReportByID).Methods(http.MethodGet)
 	router.HandleFunc("/UpdateReport/", reportHandler.UpdateReport).Methods(http.MethodPost)
+	router.HandleFunc("/FindReportsByID/{patient_id:[0-9]+}/", reportHandler.FindByPatientID).Methods(http.MethodGet)
+	router.HandleFunc("/Search/", reportHandler.Search).Methods(http.MethodPost)
 
 	router.HandleFunc("/UploadImage/", predictHandler.UploadImage).Methods(http.MethodPost)
-	router.HandleFunc("/Search/", reportHandler.Search).Methods(http.MethodPost)
+	router.HandleFunc("/GetImage/{fileName:[A-Za-z0-9!@#-.]*}/", predictHandler.GetImage).Methods(http.MethodGet)
 
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", handlers))

@@ -13,6 +13,22 @@ type ReportRepository struct {
 	db *gorm.DB
 }
 
+func (r *ReportRepository) FindByPatientID(patientID string) ([]OTCReport, error) {
+	var reports []OTCReport
+
+	// 查询某个病人的所有 OTC 报告
+	if err := r.db.
+		Preload("Patient").
+		Preload("Prediction").
+		Where("patient_id = ?", patientID).
+		Find(&reports).Error; err != nil {
+		log.Println("Failed to find OTC reports by patient ID:", err)
+		return nil, err
+	}
+
+	return reports, nil
+}
+
 func (r *ReportRepository) Search(req dto.SearchRequest) ([]OTCReport, error) {
 	// 显式指定 otc_reports 表和 patients 表的别名
 	query := r.db.Table("otc_reports").

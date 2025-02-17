@@ -18,6 +18,19 @@ func NewReportService(reportRepo *storage.ReportRepository) *ReportService {
 	return &ReportService{ReportRepo: reportRepo}
 }
 
+func (s *ReportService) FindByPatientID(patientID string) ([]storage.OTCReport, error) {
+	log.Printf("Finding OTC reports for patient ID: %d\n", patientID)
+
+	// 调用 Repository 层
+	reports, err := s.ReportRepo.FindByPatientID(patientID)
+	if err != nil {
+		log.Println("Failed to find OTC reports:", err)
+		return nil, err
+	}
+
+	return reports, nil
+}
+
 func (s *ReportService) Search(req dto.SearchRequest) ([]storage.OTCReport, error) {
 	log.Println("Searching OTC reports with conditions:", req)
 

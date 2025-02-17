@@ -36,7 +36,7 @@ type OTCReport struct {
 	Prediction       Prediction `gorm:"foreignKey:OTCReportID" json:"prediction"`   // 一对一关系
 	OTCImageStatus   int        `gorm:"type:int;default:0" json:"otc_image_status"` // 0: 未上传, 1: 已上传
 	PredictionStatus int        `gorm:"type:int;default:0" json:"report_status"`    // 0: 未开始, 1: 生成中, 2: 生成异常
-	ImagePath        string     `gorm:"type:varchar(100);default:''" json:"image_path"`
+	FileName         string     `gorm:"type:varchar(100);default:''" json:"file_name"`
 }
 
 type Doctor struct {
