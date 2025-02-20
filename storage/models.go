@@ -40,14 +40,14 @@ type OTCReport struct {
 }
 
 type Doctor struct {
-	ID         uint       `gorm:"primaryKey" json:"id"`
-	Name       string     `gorm:"size:100;not null" json:"name"`         // 设置列的大小并确保不为 null
-	Email      string     `gorm:"size:100;not null;unique" json:"email"` // 设置唯一的 Email
-	Contact    string     `gorm:"size:20;not null" json:"contact"`       // 设置联系字段的大小并确保不为 null
-	Address    string     `gorm:"size:255" json:"address"`               // 地址字段，可以根据需要设置大小
-	Profession string     `gorm:"size:100" json:"profession"`            // 职业字段的大小
-	Describe   string     `gorm:"size:300" json:"describe"`
-	Patients   []*Patient `gorm:"many2many:doctor_patients;" json:"patients"` // 关联 doctor_patients 连接表
+	ID          uint       `gorm:"primaryKey" json:"id"`
+	Name        string     `gorm:"size:100;not null" json:"name"`         // 设置列的大小并确保不为 null
+	Email       string     `gorm:"size:100;not null;unique" json:"email"` // 设置唯一的 Email
+	Contact     string     `gorm:"size:20;not null" json:"contact"`       // 设置联系字段的大小并确保不为 null
+	Address     string     `gorm:"size:255" json:"address"`               // 地址字段，可以根据需要设置大小
+	Profession  string     `gorm:"size:100" json:"profession"`            // 职业字段的大小
+	Description string     `gorm:"size:300" json:"description"`
+	Patients    []*Patient `gorm:"many2many:doctor_patients;" json:"patients"` // 关联 doctor_patients 连接表
 }
 
 // 指定 GORM 需要的表名

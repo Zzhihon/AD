@@ -74,7 +74,7 @@ func (r *DoctorRepository) GetPatientsByDoctorID(doctorID uint) ([]*Patient, err
 	if err := r.db.Table("doctor_patients").
 		Where("doctor_id = ?", doctorID).
 		Joins("JOIN patients ON patients.id = doctor_patients.patient_id").
-		Select("patients.id, patients.name"). // 选择需要的字段
+		Select("patients.id, patients.name, patients.age, patients.gender"). // 选择需要的字段
 		Scan(&patients).Error; err != nil {
 		return nil, err
 	}

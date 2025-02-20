@@ -88,8 +88,8 @@ func main() {
 	router.HandleFunc("/UploadImage/", predictHandler.UploadImage).Methods(http.MethodPost)
 	router.HandleFunc("/GetImage/{fileName:[A-Za-z0-9!@#-.]*}/", predictHandler.GetImage).Methods(http.MethodGet)
 
-	log.Println("Server started on :8080")
-	log.Fatal(http.ListenAndServe(":8080", handlers))
+	log.Println("Server started on :8081")
+	log.Fatal(http.ListenAndServe(":8081", handlers))
 }
 
 func dbclient() *gorm.DB {
