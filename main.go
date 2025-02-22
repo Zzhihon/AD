@@ -69,27 +69,27 @@ func main() {
 
 	// 启动 HTTP 服务器
 
-	minioAdress := os.Getenv("MINIO_ADDR")
+	apipath := os.Getenv("API_PATH")
 
 	//router.HandleFunc("/upload/", service.UploadHandler).Methods(http.MethodPost)
-	router.HandleFunc("/ws/", service.WebSocketHandler).Methods(http.MethodPost)
-	router.HandleFunc("/AddDoctor/", doctorHandler.CreateDoctor).Methods(http.MethodPost)
-	router.HandleFunc("/GetDoctor/{doctor_id:[0-9]+}/", doctorHandler.GetDoctorByID).Methods(http.MethodGet)
-	router.HandleFunc("/UpdateDoctor/", doctorHandler.UpdateDoctor).Methods(http.MethodPost)
-	router.HandleFunc("/GetPatients/{doctor_id:[0-9]+}/", doctorHandler.GetPatients).Methods(http.MethodGet)
+	router.HandleFunc(apipath+"/ws/", service.WebSocketHandler).Methods(http.MethodPost)
+	router.HandleFunc(apipath+"/AddDoctor/", doctorHandler.CreateDoctor).Methods(http.MethodPost)
+	router.HandleFunc(apipath+"/GetDoctor/{doctor_id:[0-9]+}/", doctorHandler.GetDoctorByID).Methods(http.MethodGet)
+	router.HandleFunc(apipath+"/UpdateDoctor/", doctorHandler.UpdateDoctor).Methods(http.MethodPost)
+	router.HandleFunc(apipath+"/GetPatients/{doctor_id:[0-9]+}/", doctorHandler.GetPatients).Methods(http.MethodGet)
 
-	router.HandleFunc("/AddPatient/", patientHandler.CreatePatient).Methods(http.MethodPost)
-	router.HandleFunc("/GetPatient/{patient_id:[0-9]+}/", patientHandler.GetPatientByID).Methods(http.MethodGet)
-	router.HandleFunc("/UpdatePatient/", patientHandler.UpdatePatient).Methods(http.MethodPost)
+	router.HandleFunc(apipath+"/AddPatient/", patientHandler.CreatePatient).Methods(http.MethodPost)
+	router.HandleFunc(apipath+"/GetPatient/{patient_id:[0-9]+}/", patientHandler.GetPatientByID).Methods(http.MethodGet)
+	router.HandleFunc(apipath+"/UpdatePatient/", patientHandler.UpdatePatient).Methods(http.MethodPost)
 
-	router.HandleFunc("/AddReport/", reportHandler.CreateReport).Methods(http.MethodPost)
-	router.HandleFunc("/GetReport/{report_id:[0-9]+}/", reportHandler.GetReportByID).Methods(http.MethodGet)
-	router.HandleFunc("/UpdateReport/", reportHandler.UpdateReport).Methods(http.MethodPost)
-	router.HandleFunc("/FindReportsByID/{patient_id:[0-9]+}/", reportHandler.FindByPatientID).Methods(http.MethodGet)
-	router.HandleFunc("/Search/", reportHandler.Search).Methods(http.MethodPost)
+	router.HandleFunc(apipath+"/AddReport/", reportHandler.CreateReport).Methods(http.MethodPost)
+	router.HandleFunc(apipath+"/GetReport/{report_id:[0-9]+}/", reportHandler.GetReportByID).Methods(http.MethodGet)
+	router.HandleFunc(apipath+"/UpdateReport/", reportHandler.UpdateReport).Methods(http.MethodPost)
+	router.HandleFunc(apipath+"/FindReportsByID/{patient_id:[0-9]+}/", reportHandler.FindByPatientID).Methods(http.MethodGet)
+	router.HandleFunc(apipath+"/Search/", reportHandler.Search).Methods(http.MethodPost)
 
-	router.HandleFunc("/UploadImage/", predictHandler.UploadImage).Methods(http.MethodPost)
-	router.HandleFunc("/GetImage/{fileName:[A-Za-z0-9!@#-.]*}/", predictHandler.GetImage).Methods(http.MethodGet)
+	router.HandleFunc(apipath+"/UploadImage/", predictHandler.UploadImage).Methods(http.MethodPost)
+	router.HandleFunc(apipath+"/GetImage/{fileName:[A-Za-z0-9!@#-.]*}/", predictHandler.GetImage).Methods(http.MethodGet)
 
 	log.Println("Server started on :8081")
 	log.Fatal(http.ListenAndServe(":8081", handlers))
