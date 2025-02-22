@@ -68,6 +68,9 @@ func main() {
 	predictHandler := handler.NewPredictHandler(predictionService)
 
 	// 启动 HTTP 服务器
+
+	minioAdress := os.Getenv("MINIO_ADDR")
+
 	//router.HandleFunc("/upload/", service.UploadHandler).Methods(http.MethodPost)
 	router.HandleFunc("/ws/", service.WebSocketHandler).Methods(http.MethodPost)
 	router.HandleFunc("/AddDoctor/", doctorHandler.CreateDoctor).Methods(http.MethodPost)
